@@ -21,9 +21,9 @@ jobs:
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: 22
         source: "./"
-        target: "/var/www/laravel/public/custom-frontend"
+        target: "/var/www/"
         strip_components: 0
-        rm: true  # Usuwa stare pliki w folderze target
+        rm: true
 
     - name: Set correct permissions (optional)
       uses: appleboy/ssh-action@v0.1.10
@@ -33,5 +33,5 @@ jobs:
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: 22
         script: |
-          sudo chown -R www-data:www-data /var/www/laravel/public/custom-frontend
+          sudo chown -R www-data:www-data /var/www/
           sudo chmod -R 755 /var/www/
