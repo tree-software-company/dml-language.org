@@ -8,7 +8,7 @@ jobs:
       - checkout
 
       - run:
-          name: Zainstaluj narzędzia SSH i rsync
+          name: Install dependencies
           command: |
             sudo apt-get update
             sudo apt-get install -y openssh-client rsync
@@ -18,7 +18,7 @@ jobs:
             - "SHA256:YOUR_SSH_KEY_FINGERPRINT"
 
       - run:
-          name: Wdróż pliki do EC2
+          name: Deploy to server
           command: |
             rsync -avz --delete ./ \
               $USER@$HOST:/var/www/ \
@@ -26,12 +26,11 @@ jobs:
               --exclude ".circleci"
 
       - run:
-          name: Ustaw prawa dostępu
+          name: Set permisions
           command: |
-            ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
-              sudo chown -R www-data:www-data /var/www/
-              sudo chmod -R 755 /var/www/
-            EOF
+            ssh -o StrictHostKeyChecking=no $USER@$HOST \
+              "sudo chown -R www-data:www-data /var/www/ && sudo chmod -R 755 /var/www/"
+
 
 workflows:
   version: 2
