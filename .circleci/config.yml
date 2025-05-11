@@ -1,37 +1,40 @@
-name: Deploy Static Frontend
-
-on:
-  push:
-    branches:
-      - main
+version: 2.1
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    docker:
+      - image: cimg/base:stable
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - checkout
 
-    - name: Deploy static files to EC2
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
-        port: 22
-        source: "./"
-        target: "/var/www/"
-        strip_components: 0
-        rm: true
+      - run:
+          name: Zainstaluj narzędzia SSH i rsync
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y openssh-client rsync
 
-    - name: Set correct permissions (optional)
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
-        port: 22
-        script: |
-          sudo chown -R www-data:www-data /var/www/
-          sudo chmod -R 755 /var/www/
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:YOUR_SSH_KEY_FINGERPRINT"
+
+      - run:
+          name: Wdróż pliki do EC2
+          command: |
+            rsync -avz --delete ./ \
+              $USER@$HOST:/var/www/ \
+              --exclude ".git" \
+              --exclude ".circleci"
+
+      - run:
+          name: Ustaw prawa dostępu
+          command: |
+            ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+              sudo chown -R www-data:www-data /var/www/
+              sudo chmod -R 755 /var/www/
+            EOF
+
+workflows:
+  version: 2
+  deploy-workflow:
+    jobs:
+      - deploy
