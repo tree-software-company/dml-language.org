@@ -21,4 +21,4 @@ jobs:
           name: Deploy to server via rsync
           command:
             rsync -avz --delete ./ \
-              -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+              -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \ 
