@@ -8,17 +8,35 @@ jobs:
       - checkout
 
       - run:
-          name: Install dependencies
+          name: Install SSH & rsync
           command: |
             sudo apt-get update
             sudo apt-get install -y openssh-client rsync
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:UhIo1a/GjPwET/jeu3RVCY/idJO+uCcAkkyMab/3kMo"
+            - "SHA256:UhIo1a/GjPwET/jeu3RVCY/idJO+uCcAkkyMab/3kMo" 
 
       - run:
-          name: Deploy to server via rsync
-          command:
+          name: Deploy HTML files to EC2
+          command: |
             rsync -avz --delete ./ \
-              -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \ 
+              -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+              $SSH_USER@$HOST:/var/www/ \
+              --exclude ".git" \
+              --exclude ".circleci"
+
+      - run:
+          name: Set permissions on EC2
+          command: |
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SSH_USER@$HOST \
+              "sudo chown -R www-data:www-data /var/www/ && sudo chmod -R 755 /var/www/"
+
+workflows:
+  version: 2
+  deploy-workflow:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: main
