@@ -21,19 +21,21 @@ jobs:
           name: Deploy to server
           command: |
             rsync -avz --delete ./ \
-              $USER@$HOST:/var/www/ \
+              $SSH_USER@$HOST:/var/www/ \
               --exclude ".git" \
               --exclude ".circleci"
 
       - run:
-          name: Set permisions
+          name: Set permissions
           command: |
-            ssh -o StrictHostKeyChecking=no $USER@$HOST \
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$HOST \
               "sudo chown -R www-data:www-data /var/www/ && sudo chmod -R 755 /var/www/"
-
 
 workflows:
   version: 2
   deploy-workflow:
     jobs:
-      - deploy
+      - deploy:
+          filters:
+            branches:
+              only: main
