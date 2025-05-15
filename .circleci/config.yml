@@ -15,27 +15,10 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:YOUR_SSH_KEY_FINGERPRINT"
+            - "SHA256:UhIo1a/GjPwET/jeu3RVCY/idJO+uCcAkkyMab/3kMo"
 
       - run:
-          name: Deploy to server
-          command: |
+          name: Deploy to server via rsync
+          command:
             rsync -avz --delete ./ \
-              $SSH_USER@$HOST:/var/www/ \
-              --exclude ".git" \
-              --exclude ".circleci"
-
-      - run:
-          name: Set permissions
-          command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$HOST \
-              "sudo chown -R www-data:www-data /var/www/ && sudo chmod -R 755 /var/www/"
-
-workflows:
-  version: 2
-  deploy-workflow:
-    jobs:
-      - deploy: 
-          filters:
-            branches:
-              only: main
+              -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
