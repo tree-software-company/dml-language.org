@@ -22,7 +22,7 @@ jobs:
           command: |
             rsync -avz --delete ./ \
               -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-              $SSH_USER@$HOST:/var/www/ \
+              $SSH_USER@$HOST:/var/www/dml-language.org \
               --exclude ".git" \
               --exclude ".circleci"
 
@@ -30,7 +30,7 @@ jobs:
           name: Set permissions on EC2
           command: |
             ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SSH_USER@$HOST \
-              "sudo chown -R www-data:www-data /var/www/ && sudo chmod -R 755 /var/www/"
+              "sudo chown -R www-data:www-data /var/www/dml-language.org && sudo chmod -R 755 /var/www/dml-language.org"
 
 workflows:
   version: 2
