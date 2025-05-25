@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+}
+
+
+
+.primary-nav {
+    background-color: #007AFF;
+}
+
+.logo__link {
+    padding: 5px;
+}
+
+.logo {
+    width: 50px;
+}
+
+.content {
+    display: grid;
+    justify-content: center;
+}
+
+.content p {
+    display: grid;
+    justify-content: center;
+}
