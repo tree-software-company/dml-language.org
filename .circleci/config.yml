@@ -15,12 +15,20 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:UhIo1a/GjPwET/jeu3RVCY/idJO+uCcAkkyMab/3kMo" 
+            - "SHA256:UhIo1a/GjPwET/jeu3RVCY/idJO+uCcAkkyMab/3kMo"
+
+      - run:
+          name: Prepare directory on EC2
+          command: |
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SSH_USER@$HOST \
+              "sudo mkdir -p /var/www/dml-language.org && sudo chown -R $SSH_USER:$SSH_USER /var/www/dml-language.org"
 
       - run:
           name: Deploy HTML files to EC2
           command: |
-            rsync -avz --delete ./ \
+            rsync -avz --delete \
+              --no-perms --no-owner --no-group --chmod=ugo=rwX \
+              ./ \
               -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
               $SSH_USER@$HOST:/var/www/dml-language.org \
               --exclude ".git" \
