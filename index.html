@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="DML Language Documentation">
+    <link rel="icon" href="img/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/logo.png">
     <link rel="stylesheet" href="style/base.css">
     <title>Dml::Dml Docs</title>
 
@@ -15,8 +17,45 @@
         </a>
     </header>
     <div class="content">
-        <h1>Work in progress</h1>
-        <p>Site will be available soon</p>
+        <section class="example-code">
+            <h2 class="title">DML Language Example</h1>
+            <div class="code-window">
+                <div class="code-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                </div>
+                <pre>
+string title = "Hello";
+number age = 30 + 2;
+boolean isActive = true;
+
+list numbers = [1, 2, 3, 4];
+map user = { "name": "Szymon", "email": "example@example.com" };
+
+string message = "Welcome, " + user.name;
+                </pre>
+            </div>
+        </section>
+        <section class="support-lang">
+            <h2 class="title">Supported Languages</h2>
+            <ul class="lang-list">
+                <img class="logo-go" src="img/GO_Logo.svg" height="50px" alt="Go-logo" />
+            </ul>
+        </section>
+        <section class="CLI-errors">
+            <h2 class="title">CLI errors</h2>
+            <div class="code-window">
+                <div class="code-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                </div>
+                <pre>
+line 5:0 missing ';' at 'list'
+                </pre>
+            </div>
+        </section>
     </div>
     <footer>
         <p>Copyright &copy; 2025 Tree. All rights reserved.</p>

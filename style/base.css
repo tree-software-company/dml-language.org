@@ -2,8 +2,6 @@ body {
     margin: 0;
 }
 
-
-
 .primary-nav {
     background-color: #007AFF;
 }
@@ -24,4 +22,47 @@ body {
 .content p {
     display: grid;
     justify-content: center;
+}
+
+.code-window {
+    background: #2b2b2b;
+    color: #f8f8f2;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    width: 90vw;
+    overflow: hidden;
+}
+
+.code-header {
+    background: #44475a;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+pre {
+    margin: 0;
+    padding: 15px;
+    background: #2b2b2b;
+    overflow-x: auto;
+}
+
+.CLI-errors {
+    padding-bottom: 15px;
+}
+
+footer {
+    background-color: #007AFF;
+    padding: 15px
 }
