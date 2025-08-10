@@ -58,7 +58,8 @@ pre {
     overflow-x: auto;
 }
 
-.CLI-errors {
+.CLI-errors,
+.download {
     padding-bottom: 15px;
 }
 
