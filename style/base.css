@@ -67,3 +67,27 @@ footer {
     background-color: #007AFF;
     padding: 15px
 }
+
+.content-documentation {
+    display: grid;
+    justify-content: start;
+}
+
+.nav-left {
+    position: static;
+}
+.nav {
+    width: 270px;
+    height: 100vh;
+    background: #fafafa;
+}
+
+.nav__list {
+    padding: 10px;
+    min-height: 100%;
+}
+
+.title__nav:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
