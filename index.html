@@ -11,68 +11,58 @@
 
 </head>
 <body>
-    <header class="primary-nav">
-        <a class="logo__link" href="/">
-            <img class="logo" src="img/logo.png" alt="logo" />
-        </a>
-    </header>
-    <div class="content">
-        <section class="example-code">
-            <h2 class="title">DML Language Example</h1>
-            <div class="code-window">
-                <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                </div>
-                <pre>
-string title = "Hello";
-number age = 30 + 2;
-boolean isActive = true;
+    <nav>
+        <div><strong>DML</strong></div>
+        <!----
+        <div>
+            <a href="docs.html">Docs</a>
+            <a href="blog.html">Blog</a>
+            <a href="patch-notes.html">Patch Notes</a>
+            <a href="extensions.html">Extensions</a>
+            <a href="https://github.com/tree-software-company/DML">GitHub</a>
+        </div>
+        -->
+    </nav>
 
-list numbers = [1, 2, 3, 4];
-map user = { "name": "Szymon", "email": "example@example.com" };
+    <section class="hero">
+        <h1>DML</h1>
+        <p>Declarative Meta Language. Structured like JSON. Powerful like a programming language.</p>
+        <!--
+        <button class="button-primary" onclick="location.href='docs.html'">
+            Get Started
+        </button>
+        -->
+    </section>
 
-string message = "Welcome, " + user.name;
-                </pre>
+    <section class="section">
+        <h2>Modern & Strict</h2>
+        <p>Strong types. Arithmetic operators. Variable references. Strict mode. Built with ANTLR, Kotlin and Java.</p>
+    </section>
+
+    <section class="section">
+        <h2>Expandable Everywhere</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Go</h3>
+                <p>Backend configuration & logic engine.</p>
             </div>
-        </section>
-        <section class="support-lang">
-            <h2 class="title">Supported Languages</h2>
-            <ul class="lang-list">
-                <img class="logo-go" src="img/GO_Logo.svg" height="50px" alt="Go-logo" />
-            </ul>
-        </section>
-        <section class="CLI-errors">
-            <h2 class="title">CLI errors</h2>
-            <div class="code-window">
-                <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                </div>
-                <pre>
-line 5:0 missing ';' at 'list'
-                </pre>
+            <!--
+            <div class="card">
+                <h3>React</h3>
+                <p>Dynamic UI configuration system.</p>
             </div>
-        </section>
-        <section class="download">
-            <h2 class="title">Download</h2>
-            <div class="code-window">
-                <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                </div>
-                <pre>
-brew tap tree-software-company/dml
-brew install dml
-                </pre>
+
+            <div class="card">
+                <h3>Java</h3>
+                <p>Enterprise-ready integration.</p>
             </div>
-        </section>
-    </div>
+            -->
+        </div>
+    </section>
+
     <footer>
-        <p>Copyright &copy; 2025 Tree. All rights reserved.</p>
+        © 2025 Tree. All rights reserved.
     </footer>
 </body>
 </html>
