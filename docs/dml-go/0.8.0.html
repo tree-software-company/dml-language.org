@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Documentation of dml-go 0.8.0: Go library and command line tool.">
+    <link rel="icon" href="../../img/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="../../img/logo.png">
+    <link rel="stylesheet" href="../../style/base.css">
+    <title>Documentation dml-go 0.8.0 | DML</title>
+</head>
+<body>
+    <nav>
+        <div><a class="nav-brand" href="../../index.html"><strong>DML</strong></a></div>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle menu">
+        <label for="nav-toggle" class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></label>
+        <div class="nav-menu">
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Resources</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    <li><a href="../../docs.html">Documentation</a></li>
+                    <li><a href="../../patch-notes.html">Patch Notes</a></li>
+                    <li><a href="../../style-guide.html">Style Guide</a></li>
+                    <li><a href="https://github.com/tree-software-company/DML/issues" target="_blank" rel="noopener noreferrer">Issues</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Community</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a></li>
+                    <li><a href="../../blog.html">Blog</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <h1>Documentation</h1>
+        <p class="doc-subtitle">DML-Go — Lightweight DML Parser and Config Loader for Go</p>
+
+        <div class="doc-switch">
+            <ul class="doc-tabs">
+                <li><a href="../../docs.html">DML</a></li>
+                <li><a href="../../docs-go.html" aria-current="page">dml-go</a></li>
+            </ul>
+            <div class="dropdown version-picker">
+                <button type="button" class="dropdown-toggle version-toggle" aria-haspopup="true">Version 0.8.0</button>
+                <ul class="dropdown-menu">
+                    <li><a href="../../docs-go.html">0.10.0 (latest)</a></li>
+                    <li><a href="0.9.2.html">0.9.2</a></li>
+                    <li><a href="0.8.0.html" aria-current="page">0.8.0</a></li>
+                    <li><a href="0.7.1.html">0.7.1</a></li>
+                    <li><a href="0.7.0.html">0.7.0</a></li>
+                    <li><a href="0.6.1.html">0.6.1</a></li>
+                    <li><a href="0.6.0.html">0.6.0</a></li>
+                    <li><a href="0.5.0.html">0.5.0</a></li>
+                    <li><a href="0.4.0.html">0.4.0</a></li>
+                    <li><a href="0.3.0.html">0.3.0</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <aside class="doc-notice">
+            <p>You are reading the documentation of dml-go 0.8.0. The latest version is <a href="../../docs-go.html">0.10.0</a>.</p>
+        </aside>
+        <p><strong>DML-Go</strong> is a lightweight and fast Go library that allows you to load, parse, validate, and cache <code>.dml</code> (Descriptive Markup Language) configuration files easily.</p>
+        <p>It supports:</p>
+        <ul>
+        <li>Nested structures (<code>server.port</code>)</li>
+        <li>Typed access with simple API (<code>GetString</code>, <code>GetInt</code>, <code>GetFloat</code>, <code>GetBool</code>, <code>GetList</code>, <code>GetMap</code>)</li>
+        <li><strong>Advanced error handling with precise line and column reporting</strong></li>
+        <li><strong>Type validation and syntax checking</strong></li>
+        <li><strong>Environment variable interpolation and management</strong></li>
+        <li><strong>12-factor app support with .env files</strong></li>
+        <li><strong>Enforced map style (JSON/Flat/Auto) for consistent output</strong></li>
+        <li><strong>Smart default policies for configuration management</strong></li>
+        <li>Validation of required keys and types</li>
+        <li>In-memory caching for faster reads</li>
+        <li>Manual reload and clear cache functionality</li>
+        <li><strong>Partial reload with <code>ReloadKeys</code> — hot-reload only selected keys (perfect for long-running services)</strong></li>
+        <li>Full nested key support (e.g., <code>server.port</code>)</li>
+        </ul>
+        <p>Built for configuration-driven applications and servers.</p>
+        <hr />
+
+        <aside class="toc">
+            <ul>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#default-policies">Default Policies</a></li>
+                <li><a href="#map-style-control">Map Style Control</a></li>
+                <li><a href="#environment-variables-integration">Environment Variables Integration</a></li>
+                <li><a href="#partial-reload-reloadkeys">Partial Reload — ReloadKeys</a></li>
+                <li><a href="#error-handling-validation">Error Handling &amp; Validation</a></li>
+                <li><a href="#api-overview">API Overview</a></li>
+                <li><a href="#example-dml-features-supported">Example DML Features Supported</a></li>
+                <li><a href="#testing">Testing</a></li>
+                <li><a href="#lint-static-dml-checks">Lint — static DML checks</a></li>
+                <li><a href="#license">License</a></li>
+                <li><a href="#author">Author</a></li>
+                <li><a href="#contributions">Contributions</a></li>
+                <li><a href="#bug-reports">Bug Reports</a></li>
+            </ul>
+        </aside>
+
+        <h2 id="installation">Installation</h2>
+        <p>Clone the repository:</p>
+        <pre><code class="language-bash">git clone https://github.com/tree-software-company/dml-go.git
+cd dml-go
+</code></pre>
+        <p>Or copy the <code>dml/</code> folder into your Go project.</p>
+        <hr />
+        <h2 id="quick-start">Quick Start</h2>
+        <h3 id="1-example-configdml">1. Example <code>config.dml</code></h3>
+        <pre><code class="language-dml">map server = {
+  &quot;port&quot;: 8080,
+  &quot;timeout&quot;: 15
+};
+
+map database = {
+  &quot;host&quot;: &quot;localhost&quot;,
+  &quot;port&quot;: 5432
+};
+</code></pre>
+        <p>Save as <code>testdata/config.dml</code>.</p>
+        <hr />
+        <h3 id="2-basic-usage">2. Basic usage</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+    &quot;time&quot;
+
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func main() {
+    cfg, err := dml.NewConfig(&quot;testdata/config.dml&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    serverMap := cfg.GetMap(&quot;server&quot;)
+    port := int(serverMap[&quot;port&quot;].(float64))
+    timeout := int(serverMap[&quot;timeout&quot;].(float64))
+
+    fmt.Printf(&quot;🚀 Starting server on port %d\n&quot;, port)
+    fmt.Printf(&quot;⏳ Timeout: %ds\n&quot;, timeout)
+
+    server := &amp;http.Server{
+        Addr:         fmt.Sprintf(&quot;:%d&quot;, port),
+        ReadTimeout:  time.Duration(timeout) * time.Second,
+        WriteTimeout: time.Duration(timeout) * time.Second,
+    }
+
+    http.HandleFunc(&quot;/api/hello&quot;, func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, &quot;👋 Hello from DML-configured server!&quot;)
+    })
+
+    if err := server.ListenAndServe(); err != nil {
+        log.Fatal(err)
+    }
+}
+</code></pre>
+        <p>Then open:<br />
+        <code>http://localhost:8080/api/hello</code></p>
+        <p>✅ You will see: <code>&quot;👋 Hello from DML-configured server!&quot;</code></p>
+        <hr />
+        <h2 id="default-policies">Default Policies</h2>
+        <p>DML-Go provides a powerful and flexible system for applying default values to configurations. Instead of scattered boolean flags, use a single <code>DefaultPolicy</code> struct.</p>
+        <h3 id="the-problem">The Problem</h3>
+        <p>Before:</p>
+        <pre><code class="language-go">// ❌ Hard to understand, easy to make mistakes
+ApplyDefaults(file, defaults, true, false, true, false)
+// What does each boolean mean? 🤔
+</code></pre>
+        <p>After:</p>
+        <pre><code class="language-go">// ✅ Crystal clear intentions
+dml.ApplyDefaults(file, defaults, dml.DefaultPolicy{
+    OnlyMissing: true,
+    StrictTypes: true,
+})
+</code></pre>
+        <h3 id="defaultpolicy-structure">DefaultPolicy Structure</h3>
+        <pre><code class="language-go">type DefaultPolicy struct {
+    Override      bool // Override existing values
+    StrictTypes   bool // Enforce type matching
+    OnlyMissing   bool // Only set values that don't exist
+    SkipIfPresent bool // Skip if any value is already present
+}
+</code></pre>
+        <h3 id="predefined-policies">Predefined Policies</h3>
+        <p>DML-Go includes three ready-to-use policies:</p>
+        <h4 id="1-permissive-policy-override-everything">1. <strong>Permissive Policy</strong> - Override Everything</h4>
+        <pre><code class="language-go">dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicyPermissive)
+</code></pre>
+        <p><strong>Behavior:</strong></p>
+        <ul>
+        <li>Overrides all existing values</li>
+        <li>No type checking</li>
+        <li>Always applies defaults</li>
+        <li>Use with caution in production</li>
+        </ul>
+        <p><strong>Use case:</strong> Development, testing, resetting configuration</p>
+        <h4 id="2-strict-policy-safe-defaults-only">2. <strong>Strict Policy</strong> - Safe Defaults Only</h4>
+        <pre><code class="language-go">dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicyStrict)
+</code></pre>
+        <p><strong>Behavior:</strong></p>
+        <ul>
+        <li>Only adds missing values</li>
+        <li>Enforces type matching</li>
+        <li>Never overrides existing values</li>
+        <li>Production-safe</li>
+        </ul>
+        <p><strong>Use case:</strong> Production deployments, safe migrations</p>
+        <h4 id="3-conservative-policy-skip-if-present">3. <strong>Conservative Policy</strong> - Skip if Present</h4>
+        <pre><code class="language-go">dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicyConservative)
+</code></pre>
+        <p><strong>Behavior:</strong></p>
+        <ul>
+        <li>Skips if ANY value exists</li>
+        <li>Type checking enabled</li>
+        <li>Preserves existing configurations</li>
+        <li>Ultra-safe</li>
+        </ul>
+        <p><strong>Use case:</strong> First-time initialization only</p>
+        <h3 id="custom-policies">Custom Policies</h3>
+        <p>Create your own policy for specific needs:</p>
+        <pre><code class="language-go">customPolicy := dml.DefaultPolicy{
+    Override:      false,  // Don't overwrite
+    StrictTypes:   true,   // Match types
+    OnlyMissing:   true,   // Only add missing
+    SkipIfPresent: false,  // Don't skip on existing
+}
+
+dml.ApplyDefaults(&quot;config.dml&quot;, defaults, customPolicy)
+</code></pre>
+        <h3 id="real-world-examples">Real-World Examples</h3>
+        <h4 id="example-1-initialize-new-configuration">Example 1: Initialize New Configuration</h4>
+        <pre><code class="language-go">defaults := map[string]any{
+    &quot;port&quot;:           8080,
+    &quot;timeout&quot;:        30,
+    &quot;debug&quot;:          false,
+    &quot;maxConnections&quot;: 100,
+}
+
+// Use permissive for first-time setup
+err := dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicyPermissive)
+</code></pre>
+        <h4 id="example-2-add-missing-settings-to-production">Example 2: Add Missing Settings to Production</h4>
+        <pre><code class="language-go">newDefaults := map[string]any{
+    &quot;cacheEnabled&quot;:  true,
+    &quot;cacheTTL&quot;:      3600,
+    &quot;rateLimitRPS&quot;:  100,
+}
+
+// Use strict to avoid breaking existing config
+err := dml.ApplyDefaults(&quot;production.dml&quot;, newDefaults, dml.DefaultPolicyStrict)
+</code></pre>
+        <h4 id="example-3-conditional-initialization">Example 3: Conditional Initialization</h4>
+        <pre><code class="language-go">defaults := map[string]any{
+    &quot;firstRun&quot;: true,
+    &quot;version&quot;:  &quot;1.0.0&quot;,
+}
+
+// Only apply if config is completely empty
+err := dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicyConservative)
+</code></pre>
+        <h4 id="example-4-type-safe-migration">Example 4: Type-Safe Migration</h4>
+        <pre><code class="language-go">// Current config has: port = 8080 (int)
+// This will FAIL because of type mismatch
+defaults := map[string]any{
+    &quot;port&quot;: &quot;9000&quot;, // ❌ string instead of int
+}
+
+err := dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicy{
+    StrictTypes: true,
+    Override:    true,
+})
+// Error: type mismatch for key 'port': expected int, got string
+</code></pre>
+        <h3 id="policy-comparison-table">Policy Comparison Table</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Policy</th>
+        <th>Override</th>
+        <th>StrictTypes</th>
+        <th>OnlyMissing</th>
+        <th>SkipIfPresent</th>
+        <th>Best For</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><strong>Permissive</strong></td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>❌</td>
+        <td>❌</td>
+        <td>Development, testing</td>
+        </tr>
+        <tr>
+        <td><strong>Strict</strong></td>
+        <td>❌</td>
+        <td>✅</td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>Production, safe updates</td>
+        </tr>
+        <tr>
+        <td><strong>Conservative</strong></td>
+        <td>❌</td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>✅</td>
+        <td>First-time initialization</td>
+        </tr>
+        <tr>
+        <td><strong>Custom</strong></td>
+        <td>🎛️</td>
+        <td>🎛️</td>
+        <td>🎛️</td>
+        <td>🎛️</td>
+        <td>Specific requirements</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="testing-policies">Testing Policies</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;testing&quot;
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func TestDefaultPolicies(t *testing.T) {
+    // Test permissive
+    defaults := map[string]any{&quot;port&quot;: 9000}
+    err := dml.ApplyDefaults(&quot;test.dml&quot;, defaults, dml.DefaultPolicyPermissive)
+    // Should override existing port value
+
+    // Test strict
+    err = dml.ApplyDefaults(&quot;test.dml&quot;, defaults, dml.DefaultPolicyStrict)
+    // Should keep existing port value
+
+    // Test conservative
+    err = dml.ApplyDefaults(&quot;test.dml&quot;, defaults, dml.DefaultPolicyConservative)
+    // Should skip entirely if any value exists
+}
+</code></pre>
+        <h3 id="error-handling">Error Handling</h3>
+        <pre><code class="language-go">defaults := map[string]any{
+    &quot;port&quot;: &quot;invalid&quot;, // Wrong type
+}
+
+err := dml.ApplyDefaults(&quot;config.dml&quot;, defaults, dml.DefaultPolicyStrict)
+if err != nil {
+    // Error: type mismatch for key 'port': expected int, got string
+    log.Printf(&quot;Policy violation: %v&quot;, err)
+}
+</code></pre>
+        <hr />
+        <h2 id="map-style-control">Map Style Control</h2>
+        <p>DML-Go gives you full control over how configuration is dumped - no more surprises!</p>
+        <h3 id="global-map-style">Global Map Style</h3>
+        <p>Set the style for all dumps:</p>
+        <pre><code class="language-go">// Always use JSON-style maps
+dml.SetMapStyle(dml.MapStyleJSON)
+
+cfg := dml.New()
+cfg.Set(&quot;server.port&quot;, 8080)
+cfg.Set(&quot;server.host&quot;, &quot;localhost&quot;)
+
+fmt.Println(cfg.Dump())
+</code></pre>
+        <p><strong>Output:</strong></p>
+        <pre><code class="language-dml">@mapStyle json
+
+map server = {
+  &quot;host&quot;: &quot;localhost&quot;,
+  &quot;port&quot;: 8080
+};
+</code></pre>
+        <h3 id="available-styles">Available Styles</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Style</th>
+        <th>Behavior</th>
+        <th>Example</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>MapStyleJSON</code></td>
+        <td>Always uses map syntax</td>
+        <td><code>map server = { &quot;port&quot;: 8080 };</code></td>
+        </tr>
+        <tr>
+        <td><code>MapStyleFlat</code></td>
+        <td>Always uses flat key-value syntax</td>
+        <td><code>number server.port = 8080;</code></td>
+        </tr>
+        <tr>
+        <td><code>MapStyleAuto</code></td>
+        <td>Automatically decides based on content</td>
+        <td>Smart decision based on complexity</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="per-config-override">Per-Config Override</h3>
+        <p>Override style for specific config instances:</p>
+        <pre><code class="language-go">cfg := dml.New()
+cfg.SetMapStyle(dml.MapStyleFlat)
+cfg.Set(&quot;database.host&quot;, &quot;localhost&quot;)
+cfg.Set(&quot;database.port&quot;, 5432)
+
+fmt.Println(cfg.Dump())
+</code></pre>
+        <p><strong>Output:</strong></p>
+        <pre><code class="language-dml">@mapStyle flat
+
+string database.host = &quot;localhost&quot;;
+number database.port = 5432;
+</code></pre>
+        <h3 id="dml-file-directive">DML File Directive</h3>
+        <p>Control style directly in <code>.dml</code> files:</p>
+        <pre><code class="language-dml">@mapStyle json
+
+map server = {
+  &quot;port&quot;: 8080,
+  &quot;timeout&quot;: 30
+};
+</code></pre>
+        <p>The parser respects the <code>@mapStyle</code> directive and maintains consistency.</p>
+        <h3 id="why-map-style-control">Why Map Style Control?</h3>
+        <p><strong>Problem:</strong> CLI tools might generate inconsistent output:</p>
+        <pre><code class="language-dml">// Sometimes this:
+string server.port = &quot;8080&quot;;
+
+// Sometimes this:
+map server = {
+  &quot;port&quot;: 8080
+};
+</code></pre>
+        <p><strong>Solution:</strong> Enforce consistent style:</p>
+        <pre><code class="language-go">dml.SetMapStyle(dml.MapStyleJSON)
+// Now ALWAYS generates map syntax - zero surprises! 🎯
+</code></pre>
+        <hr />
+        <h2 id="environment-variables-integration">Environment Variables Integration</h2>
+        <p>DML-Go provides powerful environment variable support for 12-factor apps.</p>
+        <h3 id="loading-env-files">Loading .env Files</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;log&quot;
+
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func main() {
+    // Load .env file
+    if err := dml.LoadEnv(&quot;.env&quot;); err != nil {
+        log.Fatal(err)
+    }
+
+    // Or load only if exists (no error if missing)
+    if err := dml.LoadEnvIfExists(&quot;.env&quot;); err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println(&quot;✅ Environment variables loaded!&quot;)
+}
+</code></pre>
+        <h3 id="example-env-file">Example <code>.env</code> file</h3>
+        <pre><code class="language-env">DB_HOST=localhost
+DB_PORT=5432
+DB_USER=admin
+DB_PASSWORD=secret123
+DB_NAME=myapp
+APP_NAME=DML-Go App
+APP_ENV=production
+API_KEY=your-api-key-here
+</code></pre>
+        <hr />
+        <h3 id="environment-variable-interpolation">Environment Variable Interpolation</h3>
+        <p>Use <code>${VAR_NAME}</code> syntax in your DML files:</p>
+        <pre><code class="language-dml">// config.dml with environment variables
+string db_host = &quot;${DB_HOST}&quot;;
+int db_port = 5432;
+string db_user = &quot;${DB_USER}&quot;;
+string db_password = &quot;${DB_PASSWORD}&quot;;
+string db_name = &quot;${DB_NAME}&quot;;
+
+// Interpolation works in complex strings too
+string db_url = &quot;postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}&quot;;
+
+string app_name = &quot;${APP_NAME}&quot;;
+string api_key = &quot;${API_KEY}&quot;;
+
+// Lists with env vars
+list allowed_hosts = [&quot;localhost&quot;, &quot;${DB_HOST}&quot;, &quot;example.com&quot;];
+</code></pre>
+        <p><strong>Load and expand variables:</strong></p>
+        <pre><code class="language-go">// Load environment variables first
+dml.LoadEnv(&quot;.env&quot;)
+
+// Load DML config
+cfg, err := dml.NewConfig(&quot;config.dml&quot;)
+if err != nil {
+    log.Fatal(err)
+}
+
+// Expand environment variables in config
+cfg.LoadWithEnv()
+
+// Access expanded values
+fmt.Println(cfg.GetString(&quot;db_url&quot;))
+// Output: postgresql://admin:secret123@localhost:5432/myapp
+</code></pre>
+        <hr />
+        <h3 id="environment-variable-helpers">Environment Variable Helpers</h3>
+        <pre><code class="language-go">// Get environment variable with default value
+timeout := dml.GetEnv(&quot;REQUEST_TIMEOUT&quot;, &quot;30&quot;)
+
+// Get environment variable or panic if not set
+apiKey := dml.MustGetEnv(&quot;API_KEY&quot;)
+
+// Expand environment variables in any string
+url := dml.ExpandEnv(&quot;https://${HOST}:${PORT}/api&quot;)
+</code></pre>
+        <hr />
+        <h3 id="setting-environment-defaults-from-config">Setting Environment Defaults from Config</h3>
+        <pre><code class="language-go">cfg, _ := dml.NewConfig(&quot;config.dml&quot;)
+
+// Set environment variables from config with prefix
+cfg.SetEnvDefaults(&quot;SERVER&quot;)
+// Sets: SERVER_PORT, SERVER_HOST, SERVER_TIMEOUT, etc.
+</code></pre>
+        <hr />
+        <h3 id="override-config-from-environment">Override Config from Environment</h3>
+        <pre><code class="language-go">cfg, _ := dml.NewConfig(&quot;config.dml&quot;)
+
+// Override config values from environment variables
+// Will look for env vars matching config keys (uppercase)
+cfg.EnvOverride(&quot;&quot;)
+
+// With prefix: APP_PORT, APP_DEBUG, etc.
+cfg.EnvOverride(&quot;APP&quot;)
+</code></pre>
+        <p><strong>Example:</strong></p>
+        <pre><code class="language-go">// config.dml
+int port = 8080;
+bool debug = true;
+
+// Set environment variables
+os.Setenv(&quot;PORT&quot;, &quot;9000&quot;)
+os.Setenv(&quot;DEBUG&quot;, &quot;false&quot;)
+
+// Override from environment
+cfg.EnvOverride(&quot;&quot;)
+
+// Values are now from environment
+fmt.Println(cfg.GetInt(&quot;port&quot;))   // 9000
+fmt.Println(cfg.GetBool(&quot;debug&quot;)) // false
+</code></pre>
+        <hr />
+        <h3 id="full-12-factor-app-example">Full 12-Factor App Example</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;log&quot;
+
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func main() {
+    // 1. Load .env file (development)
+    if err := dml.LoadEnvIfExists(&quot;.env&quot;); err != nil {
+        log.Fatal(err)
+    }
+
+    // 2. Load DML config
+    cfg, err := dml.NewConfig(&quot;config.dml&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // 3. Expand environment variables
+    cfg.LoadWithEnv()
+
+    // 4. Override from environment (production overrides)
+    cfg.EnvOverride(&quot;&quot;)
+
+    // 5. Use configuration
+    fmt.Printf(&quot;🚀 Starting %s\n&quot;, cfg.GetString(&quot;app_name&quot;))
+    fmt.Printf(&quot;🌍 Environment: %s\n&quot;, dml.GetEnv(&quot;APP_ENV&quot;, &quot;development&quot;))
+    fmt.Printf(&quot;💾 Database: %s\n&quot;, cfg.GetString(&quot;db_host&quot;))
+    fmt.Printf(&quot;🔌 Port: %d\n&quot;, cfg.GetInt(&quot;port&quot;))
+}
+</code></pre>
+        <hr />
+        <h2 id="partial-reload-reloadkeys">Partial Reload — <code>ReloadKeys</code></h2>
+        <p>For <strong>long-running Go services</strong> you often want to hot-reload a small subset of
+        configuration (e.g. rate limits, feature flags) without touching the rest.
+        <code>ReloadKeys</code> re-parses the file but updates <strong>only the keys you list</strong>.</p>
+        <h3 id="signatures">Signatures</h3>
+        <pre><code class="language-go">// Package-level — updates the global in-memory cache.
+func ReloadKeys(filepath string, keys ...string) (map[string]any, error)
+
+// Method — updates a *Config instance directly.
+func (c *Config) ReloadKeys(filepath string, keys ...string) error
+</code></pre>
+        <h3 id="behaviour">Behaviour</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Scenario</th>
+        <th>Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>Key exists in file and is listed</td>
+        <td>Value updated in cache / <code>*Config</code></td>
+        </tr>
+        <tr>
+        <td>Key exists in file but <strong>not</strong> listed</td>
+        <td>Untouched — existing value preserved</td>
+        </tr>
+        <tr>
+        <td>Key listed but <strong>absent</strong> from file</td>
+        <td>Silently skipped — existing value preserved</td>
+        </tr>
+        <tr>
+        <td>No cache entry yet (package-level variant)</td>
+        <td>New entry created containing only listed keys</td>
+        </tr>
+        </tbody>
+        </table>
+        <p>Thread-safe: both variants use <code>cacheMutex</code> for the cache write.</p>
+        <h3 id="example-config-method-recommended-for-services">Example — <code>*Config</code> method (recommended for services)</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;log&quot;
+    &quot;time&quot;
+
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func main() {
+    cfg, err := dml.NewConfig(&quot;config.dml&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Poll every 30 s and hot-reload only server + database.
+    // app_version (and any other key) is never touched.
+    ticker := time.NewTicker(30 * time.Second)
+    defer ticker.Stop()
+
+    for range ticker.C {
+        if err := cfg.ReloadKeys(&quot;config.dml&quot;, &quot;server&quot;, &quot;database&quot;); err != nil {
+            log.Printf(&quot;reload error: %v&quot;, err)
+        }
+    }
+}
+</code></pre>
+        <h3 id="example-package-level-cache-based">Example — package-level (cache-based)</h3>
+        <pre><code class="language-go">// Somewhere at startup:
+dml.Cache(&quot;config.dml&quot;)
+
+// Later, on a timer or signal:
+data, err := dml.ReloadKeys(&quot;config.dml&quot;, &quot;server&quot;, &quot;database&quot;)
+if err != nil {
+    log.Printf(&quot;reload error: %v&quot;, err)
+}
+srv := data[&quot;server&quot;].(map[string]any)
+log.Printf(&quot;server.host = %v&quot;, srv[&quot;host&quot;])
+</code></pre>
+        <h3 id="when-to-use-reload-vs-reloadkeys">When to use <code>Reload</code> vs <code>ReloadKeys</code></h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Situation</th>
+        <th>Use</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>Small config, full refresh is fine</td>
+        <td><code>Reload</code></td>
+        </tr>
+        <tr>
+        <td>Large config, only a few keys change at runtime</td>
+        <td><code>ReloadKeys</code></td>
+        </tr>
+        <tr>
+        <td>Config has computed/enriched keys you do not persist</td>
+        <td><code>ReloadKeys</code></td>
+        </tr>
+        <tr>
+        <td>First load at startup</td>
+        <td><code>NewConfig</code> / <code>Cache</code></td>
+        </tr>
+        </tbody>
+        </table>
+        <hr />
+        <h2 id="error-handling-validation">Error Handling &amp; Validation</h2>
+        <p>DML-Go provides comprehensive error handling with detailed context about syntax and validation errors.</p>
+        <h3 id="error-types">Error Types</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Type</th>
+        <th>Description</th>
+        <th>Example</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><strong>Syntax Error</strong></td>
+        <td>Invalid DML syntax</td>
+        <td>Missing <code>=</code> or semicolon</td>
+        </tr>
+        <tr>
+        <td><strong>Validation Error</strong></td>
+        <td>Invalid identifier or unknown type</td>
+        <td>Variable name starting with number</td>
+        </tr>
+        <tr>
+        <td><strong>Type Error</strong></td>
+        <td>Value doesn't match declared type</td>
+        <td>String without quotes</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="example-error-output">Example Error Output</h3>
+        <pre><code class="language-go">cfg := dml.New()
+err := cfg.Parse(`string name = invalid;`)
+if err != nil {
+    fmt.Println(err)
+}
+</code></pre>
+        <p><strong>Output:</strong></p>
+        <pre><code>Type Error at line 1:18
+  String must be enclosed in double quotes
+
+  string name = invalid;
+                 ^
+</code></pre>
+        <h3 id="common-validation-rules">Common Validation Rules</h3>
+        <h4 id="valid-variable-names">Valid Variable Names</h4>
+        <pre><code class="language-dml">string userName = &quot;Alice&quot;;      // ✅ Valid
+string _private = &quot;secret&quot;;     // ✅ Valid
+string data123 = &quot;info&quot;;        // ✅ Valid
+</code></pre>
+        <h4 id="invalid-variable-names">Invalid Variable Names</h4>
+        <pre><code class="language-dml">string 123name = &quot;test&quot;;        // ❌ Cannot start with number
+string user-name = &quot;test&quot;;      // ❌ No hyphens allowed
+string user name = &quot;test&quot;;      // ❌ No spaces allowed
+</code></pre>
+        <h4 id="valid-type-declarations">Valid Type Declarations</h4>
+        <pre><code class="language-dml">string name = &quot;John&quot;;           // ✅ Strings must have quotes
+int age = 25;                   // ✅ Integer number
+float price = 19.99;            // ✅ Floating point number
+bool active = true;             // ✅ Boolean: true or false
+list tags = [&quot;go&quot;, &quot;dml&quot;];      // ✅ List of values
+map config = {&quot;key&quot;: &quot;value&quot;};  // ✅ Key-value map
+</code></pre>
+        <h4 id="common-type-errors">Common Type Errors</h4>
+        <pre><code class="language-dml">string name = John;             // ❌ Missing quotes
+int age = abc;                  // ❌ Not a valid integer
+bool active = yes;              // ❌ Must be 'true' or 'false'
+unknown_type value = &quot;test&quot;;    // ❌ Unknown type
+</code></pre>
+        <h3 id="testing-error-handling">Testing Error Handling</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func main() {
+    cfg := dml.New()
+
+    // This will return a detailed error
+    err := cfg.Parse(`int age = invalid_number;`)
+
+    if err != nil {
+        // Check if it's a DMLError for detailed info
+        if dmlErr, ok := err.(*dml.DMLError); ok {
+            fmt.Printf(&quot;Error Type: %s\n&quot;, dmlErr.Type)
+            fmt.Printf(&quot;Line: %d, Column: %d\n&quot;, dmlErr.Line, dmlErr.Column)
+            fmt.Printf(&quot;Message: %s\n&quot;, dmlErr.Message)
+        }
+
+        // Or just print the full formatted error
+        fmt.Println(err)
+    }
+}
+</code></pre>
+        <hr />
+        <h2 id="api-overview">API Overview</h2>
+        <h3 id="core-functions">Core functions</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Function</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>Load(file string)</code></td>
+        <td>Loads and parses a <code>.dml</code> file into a raw <code>map[string]interface{}</code></td>
+        </tr>
+        <tr>
+        <td><code>NewConfig(file string)</code></td>
+        <td>Loads and parses a <code>.dml</code> file into a <code>Config</code> structure</td>
+        </tr>
+        <tr>
+        <td><code>Cache(file string)</code></td>
+        <td>Loads and caches parsed data in memory</td>
+        </tr>
+        <tr>
+        <td><code>Reload(file string)</code></td>
+        <td>Forces re-parsing and updates the cache for a file</td>
+        </tr>
+        <tr>
+        <td><code>ReloadKeys(file string, keys ...string)</code></td>
+        <td>Partially reloads only the given top-level keys in the cache</td>
+        </tr>
+        <tr>
+        <td><code>ClearCache()</code></td>
+        <td>Clears all cached parsed files from memory</td>
+        </tr>
+        <tr>
+        <td><code>Watch(file)</code></td>
+        <td>Live reload of dml file</td>
+        </tr>
+        <tr>
+        <td><code>ApplyDefaults(file, defaults, policy)</code></td>
+        <td>Apply default values with policy control</td>
+        </tr>
+        <tr>
+        <td><code>SetMapStyle(style MapStyle)</code></td>
+        <td>Sets global map dump style (JSON/Flat/Auto)</td>
+        </tr>
+        <tr>
+        <td><code>GetMapStyle()</code></td>
+        <td>Returns current global map style</td>
+        </tr>
+        </tbody>
+        </table>
+        <p>Every function that takes a file path (<code>Load</code>, <code>NewConfig</code>, <code>Cache</code>, <code>Reload</code>, <code>ReloadKeys</code>, <code>ApplyDefaults</code>, <code>Lint</code>, <code>LoadEnv</code>, <code>LoadEnvIfExists</code>, <code>Config.ReloadKeys</code>, <code>Config.SaveToFile</code>) rejects empty paths, paths containing a NUL byte and paths containing a <code>..</code> segment (for example <code>../../etc/passwd</code>). The returned error wraps <code>dml.ErrInvalidPath</code>, so it can be checked with <code>errors.Is(err, dml.ErrInvalidPath)</code>.</p>
+        <h3 id="config-methods"><code>Config</code> methods</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Method</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>Parse(content string)</code></td>
+        <td>Parses DML content string with validation</td>
+        </tr>
+        <tr>
+        <td><code>GetString(key string)</code></td>
+        <td>Returns a string value (supports nested keys like <code>server.name</code>)</td>
+        </tr>
+        <tr>
+        <td><code>GetInt(key string)</code></td>
+        <td>Returns an integer value</td>
+        </tr>
+        <tr>
+        <td><code>GetFloat(key string)</code></td>
+        <td>Returns a float64 number value</td>
+        </tr>
+        <tr>
+        <td><code>GetBool(key string)</code></td>
+        <td>Returns a boolean value</td>
+        </tr>
+        <tr>
+        <td><code>GetList(key string)</code></td>
+        <td>Returns a list or an empty list</td>
+        </tr>
+        <tr>
+        <td><code>GetMap(key string)</code></td>
+        <td>Returns a map or an empty map</td>
+        </tr>
+        <tr>
+        <td><code>MustString(key string)</code></td>
+        <td>Returns a string value or panics if missing</td>
+        </tr>
+        <tr>
+        <td><code>Has(key string)</code></td>
+        <td>Checks if a key exists</td>
+        </tr>
+        <tr>
+        <td><code>Keys()</code></td>
+        <td>Returns a sorted list of top-level keys</td>
+        </tr>
+        <tr>
+        <td><code>Dump()</code></td>
+        <td>Dumps the entire parsed data in DML format (respects map style)</td>
+        </tr>
+        <tr>
+        <td><code>SetMapStyle(style MapStyle)</code></td>
+        <td>Sets map style for this specific config</td>
+        </tr>
+        <tr>
+        <td><code>ReloadKeys(file string, keys ...string)</code></td>
+        <td>Hot-reloads only the specified top-level keys from a file</td>
+        </tr>
+        <tr>
+        <td><code>ValidateRequired(keys...)</code></td>
+        <td>Validates that specific keys exist</td>
+        </tr>
+        <tr>
+        <td><code>ValidateRequiredTyped(rules map[string]string)</code></td>
+        <td>Validates that keys exist and match expected types</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="default-policy-presets">Default Policy Presets</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Policy</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>DefaultPolicyPermissive</code></td>
+        <td>Override all, no type checking (dev/testing)</td>
+        </tr>
+        <tr>
+        <td><code>DefaultPolicyStrict</code></td>
+        <td>Only missing, strict types (production-safe)</td>
+        </tr>
+        <tr>
+        <td><code>DefaultPolicyConservative</code></td>
+        <td>Skip if any present, strict types (ultra-safe)</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="debug-methods"><code>Debug</code> methods</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Method</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>MissedKeys()</code></td>
+        <td>Show which variables weren't declared in dml config</td>
+        </tr>
+        <tr>
+        <td><code>MissedTypedKeys()</code></td>
+        <td>Show which types weren't declared in dml config</td>
+        </tr>
+        <tr>
+        <td><code>ValidateState()</code></td>
+        <td>Show which types and variables weren't declared in dml config</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="error-types-2">Error types</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Type</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>DMLError</code></td>
+        <td>Structured error with line, column, and context</td>
+        </tr>
+        <tr>
+        <td><code>ErrorTypeSyntax</code></td>
+        <td>Syntax errors (missing operators, brackets, etc.)</td>
+        </tr>
+        <tr>
+        <td><code>ErrorTypeValidation</code></td>
+        <td>Validation errors (invalid identifiers, etc.)</td>
+        </tr>
+        <tr>
+        <td><code>ErrorTypeType</code></td>
+        <td>Type mismatch errors (wrong value format)</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="internal-helpers">Internal helpers</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Helper</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>resolveNestedKey(key)</code></td>
+        <td>Allows reading deeply nested values using dot notation like <code>server.port</code></td>
+        </tr>
+        <tr>
+        <td><code>isValidIdentifier(name)</code></td>
+        <td>Validates variable names according to DML rules</td>
+        </tr>
+        </tbody>
+        </table>
+        <hr />
+        <h2 id="example-dml-features-supported">Example DML Features Supported</h2>
+        <pre><code class="language-dml">// Control dump style with directive
+@mapStyle json
+
+// Strings must be in double quotes
+string title = &quot;Hello World&quot;;
+
+// Numbers can be integers or floats
+int age = 25;
+float price = 19.99;
+
+// Booleans must be true or false
+bool isActive = true;
+
+// Lists use square brackets
+list hobbies = [&quot;coding&quot;, &quot;gaming&quot;, &quot;reading&quot;];
+
+// Maps use curly braces with key-value pairs
+map user = {&quot;name&quot;: &quot;Szymon&quot;, &quot;email&quot;: &quot;example@example.com&quot;};
+
+// Comments are supported (use //)
+// This is a comment
+</code></pre>
+        <h3 id="supported-types">Supported Types</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Type</th>
+        <th>Format</th>
+        <th>Example</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>string</code></td>
+        <td>Double-quoted text</td>
+        <td><code>&quot;Hello World&quot;</code></td>
+        </tr>
+        <tr>
+        <td><code>int</code></td>
+        <td>Integer number</td>
+        <td><code>42</code></td>
+        </tr>
+        <tr>
+        <td><code>float</code></td>
+        <td>Decimal number</td>
+        <td><code>3.14</code></td>
+        </tr>
+        <tr>
+        <td><code>bool</code></td>
+        <td>true or false</td>
+        <td><code>true</code></td>
+        </tr>
+        <tr>
+        <td><code>list</code></td>
+        <td>Square brackets</td>
+        <td><code>[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]</code></td>
+        </tr>
+        <tr>
+        <td><code>map</code></td>
+        <td>Curly braces</td>
+        <td><code>{&quot;key&quot;: &quot;value&quot;}</code></td>
+        </tr>
+        </tbody>
+        </table>
+        <hr />
+        <h2 id="testing">Testing</h2>
+        <p>Run the test suite:</p>
+        <pre><code class="language-bash"># Run all tests
+go test ./dml -v
+
+# Run specific tests
+go test ./dml -run TestDefaultPolicy -v
+
+# Run with coverage
+go test ./dml -cover
+
+# Generate coverage report
+go test ./dml -coverprofile=coverage.out
+go tool cover -html=coverage.out
+
+# Run examples
+go run examples/policy_example.go
+go run examples/mapstyle_example.go
+go run examples/env_example.go
+go run examples/reload_keys_example.go
+
+# Run error handling demo
+go run tests/test_errors.go
+
+# Test map style functionality
+go run tests/test_mapstyle.go
+</code></pre>
+        <h2 id="lint-static-dml-checks">Lint — static DML checks</h2>
+        <p>A simple file-based linter was added to catch common DML mistakes early.</p>
+        <ul>
+        <li>Function: <code>func Lint(file string) ([]LintIssue, error)</code></li>
+        <li>Type:<pre><code class="language-go">type LintIssue struct {
+  Level   string // &quot;error&quot; | &quot;warning&quot;
+  Code    string // MAP_TRAILING_COMMA, MIXED_MAP_STYLE, TYPED_MAP_ENTRY, UNUSED_DEFAULT, EMPTY_MAP, MAP_UNCLOSED
+  Message string
+  Line    int
+}
+</code></pre>
+        </li>
+        </ul>
+        <p>Checks performed:</p>
+        <ul>
+        <li>MAP_TRAILING_COMMA — trailing comma after last map element</li>
+        <li>TYPED_MAP_ENTRY — typed entries inside maps (e.g. <code>string port = ...</code>)</li>
+        <li>MIXED_MAP_STYLE — mixed style: maps and root-level vars used together</li>
+        <li>UNUSED_DEFAULT — default declarations that are never used</li>
+        <li>EMPTY_MAP — empty maps (e.g. <code>server = {}</code>)</li>
+        <li>MAP_UNCLOSED — unclosed map (missing <code>}</code>)</li>
+        </ul>
+        <p>Usage example:</p>
+        <pre><code class="language-go">issues, err := dml.Lint(&quot;testdata/config.dml&quot;)
+if err != nil {
+  log.Fatal(err)
+}
+for _, it := range issues {
+  fmt.Printf(&quot;%s: %s (code=%s) line=%d\n&quot;, it.Level, it.Message, it.Code, it.Line)
+}
+</code></pre>
+        <p>Files:</p>
+        <ul>
+        <li>Implementation: <code>dml/lint.go</code></li>
+        <li>Tests: <code>dml/lint_test.go</code></li>
+        </ul>
+        <p>Run linter tests:</p>
+        <pre><code class="language-bash">cd /Users/szymonmastalerz/Documents/_prywatne-studia/tree/dml-go
+go test ./dml -run TestLint_BasicChecks -v
+# or run all tests
+go test ./... -v
+</code></pre>
+        <p>Consider adding a CLI command or CI job to run <code>Lint</code> on DML files to prevent common config bugs before deployment.</p>
+        <h3 id="test-coverage">Test Coverage</h3>
+        <p>The library includes comprehensive tests for:</p>
+        <ul>
+        <li>Valid syntax parsing for all types</li>
+        <li>Invalid syntax detection</li>
+        <li>Type validation</li>
+        <li>Identifier validation</li>
+        <li>Multi-line configurations</li>
+        <li>Comment handling</li>
+        <li>Error message formatting</li>
+        <li>Map style enforcement (JSON/Flat/Auto)</li>
+        <li>Default policy behavior (Permissive/Strict/Conservative)</li>
+        <li>Type-safe default application</li>
+        <li>Policy violation detection</li>
+        </ul>
+        <hr />
+        <h2 id="license">License</h2>
+        <p>This project is licensed under the <a href="https://github.com/tree-software-company/dml-go/blob/dml.golang@0.8.0/LICENSE" target="_blank" rel="noopener noreferrer">Apache 2.0 License</a>.</p>
+        <hr />
+        <h2 id="author">Author</h2>
+        <p>Developed by <a href="https://github.com/tree-software-company" target="_blank" rel="noopener noreferrer">Tree Software Company</a> ✨</p>
+        <hr />
+        <h2 id="contributions">Contributions</h2>
+        <p>Feel free to open issues, create pull requests, or suggest features! 🚀
+        Let's make DML integration in Go even better together!</p>
+        <hr />
+        <h2 id="bug-reports">Bug Reports</h2>
+        <p>When reporting bugs, please include:</p>
+        <ol>
+        <li>Your DML configuration file</li>
+        <li>The error message with line and column numbers</li>
+        <li>Expected vs actual behavior</li>
+        <li>Go version and OS</li>
+        </ol>
+        <p>This helps us fix issues faster! 💪</p>
+    </main>
+
+    <footer>
+        © 2025 Tree. All rights reserved.
+    </footer>
+</body>
+</html>

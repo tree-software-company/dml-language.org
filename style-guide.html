@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guidelines for changing the DML and dml-go repositories: rules, structure, commands and security.">
+    <link rel="icon" href="img/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/logo.png">
+    <link rel="stylesheet" href="style/base.css">
+    <title>Style Guide | DML</title>
+</head>
+<body>
+    <nav>
+        <div><a class="nav-brand" href="index.html"><strong>DML</strong></a></div>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle menu">
+        <label for="nav-toggle" class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></label>
+        <div class="nav-menu">
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Resources</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="patch-notes.html">Patch Notes</a></li>
+                    <li><a href="style-guide.html">Style Guide</a></li>
+                    <li><a href="https://github.com/tree-software-company/DML/issues" target="_blank" rel="noopener noreferrer">Issues</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Community</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <h1>Style Guide</h1>
+        <p>Everything you need to know before changing the DML interpreter or the dml-go library. Read the rules for all repositories first, then the section for the repository you are editing.</p>
+
+        <aside class="toc">
+            <ul>
+                <li><a href="#rules">Rules for every change</a></li>
+                <li><a href="#dml">DML</a></li>
+                <li><a href="#dml-go">dml-go</a></li>
+                <li><a href="#workflow">Workflow</a></li>
+            </ul>
+        </aside>
+
+        <h2 id="rules">Rules for every change</h2>
+        <ul>
+            <li>Do not add comments of any kind to any file: no <code>//</code>, <code>/* */</code>, <code>#</code>, doc comments, <code>TODO</code> or <code>FIXME</code> markers, section dividers or commented-out code. This includes <code>.dml</code> files, the grammar and CI configuration. Express intent through names and structure, and explain a change in the pull request instead.</li>
+            <li>Leave existing comments untouched unless the change is about them.</li>
+            <li>Follow the structure of the repository you are editing. Do not move, rename or restructure existing code in a change that is about something else.</li>
+            <li>Treat every <code>.dml</code> file as untrusted input.</li>
+            <li>Never commit secrets, keys or <code>.env</code> files.</li>
+            <li>Ask before cutting a release, force-pushing or deleting data.</li>
+        </ul>
+
+        <h2 id="dml">DML</h2>
+        <p>The interpreter and command line tool. It is written in Kotlin 1.9 for the JVM 17, built with Gradle into a shadow jar (<code>DML-all.jar</code>), and uses an ANTLR 4.13 grammar, snakeyaml and kotlinx-serialization.</p>
+
+        <h3>Commands</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>./gradlew test</code></td><td>Runs the test suite</td></tr>
+                <tr><td><code>./gradlew build</code></td><td>Builds and tests the project</td></tr>
+                <tr><td><code>./gradlew shadowJar</code></td><td>Builds <code>build/libs/DML-all.jar</code></td></tr>
+                <tr><td><code>java -jar build/libs/DML-all.jar -r dml file.dml</code></td><td>Runs a DML file with the freshly built jar</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Structure</h3>
+        <pre><code>src/main/antlr/DML.g4                 grammar
+src/main/kotlin/Main.kt  DMLInterpreter.kt
+src/main/kotlin/cli/                  Cli.kt, argument handling
+src/main/kotlin/interpreter/          DMLExecutor.kt, SymbolTable.kt
+src/test/kotlin/                      JUnit 5, one class per concern, @TempDir for files
+src/test/resources/                   .dml fixtures used by tests
+.circleci/config.yml                  test, build, release</code></pre>
+
+        <h3>Code style</h3>
+        <ul>
+            <li>Classes are PascalCase and functions are camelCase. One concern per file.</li>
+            <li>Tests use JUnit 5, one class per concern, and <code>@TempDir</code> for files. A test name states the scenario and the expected result.</li>
+            <li>Every interpreter, import or CLI change ships with a security test in <code>src/test/kotlin</code>.</li>
+        </ul>
+
+        <h3>Security</h3>
+        <p>The interpreter runs untrusted <code>.dml</code> input, so these rules are not negotiable.</p>
+        <ul>
+            <li>Never weaken the sandbox root, the import stack, the recursion limit, the file-size limit, the timeouts or the regex safeguards.</li>
+            <li>Resolve every import path against the sandbox root after normalisation. Reject traversal, symlink escapes and absolute paths outside the root.</li>
+            <li>Bound everything: recursion depth, import depth, file size, execution time and regex complexity. Fail with a clear error and never hang.</li>
+            <li>Escape values on every output path (YAML, JSON, XML, environment interpolation). Error messages never include file contents or environment values.</li>
+            <li>Never execute, <code>eval</code> or shell out on data that comes from a <code>.dml</code> file.</li>
+            <li>A release publishes the jar together with its SHA-256 and updates the Homebrew formula in the same step. Keep plugin versions pinned.</li>
+        </ul>
+
+        <h2 id="dml-go">dml-go</h2>
+        <p>The Go library and command line tool that loads, parses, validates and caches <code>.dml</code> configuration files. The module is <code>github.com/tree-software-company/dml-go</code> and targets Go 1.21.</p>
+
+        <h3>Commands</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Command</th>
+                    <th>What it does</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>go build -o bin/dml ./cmd/dml</code></td><td>Builds the command line tool</td></tr>
+                <tr><td><code>go test ./...</code></td><td>Runs all tests</td></tr>
+                <tr><td><code>gofmt -l .</code></td><td>Lists files that are not formatted</td></tr>
+                <tr><td><code>go vet ./...</code></td><td>Reports suspicious code</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Structure</h3>
+        <pre><code>cmd/dml/main.go          CLI entry only
+dml/                     public package: parser, config, env, error, lint
+dml/*_test.go            tests next to the code they cover
+internal/                jar download and verification
+examples/  testdata/     runnable examples and fixtures</code></pre>
+
+        <h3>Code style</h3>
+        <ul>
+            <li>Standard Go style: <code>gofmt</code> and tabs.</li>
+            <li>Exported names are documented by clear naming, not by comments.</li>
+            <li>Wrap errors with <code>%w</code>.</li>
+            <li>Tests are <code>_test.go</code> files only, placed next to the code they cover.</li>
+        </ul>
+
+        <h3>Security</h3>
+        <ul>
+            <li>Never skip or weaken the SHA-256 verification of the downloaded DML jar.</li>
+            <li>The jar is downloaded only from a pinned version URL and verified against a pinned SHA-256 before use. Bump the version and the hash together.</li>
+            <li>The download connection is also TLS-pinned by SPKI hash for each host in <code>internal/pins.go</code>, and redirects must stay on HTTPS. Update the pins when GitHub changes its CA or CDN host. <code>DML_LIVE_PIN_TEST=1 go test ./internal -run Live</code> detects stale pins.</li>
+            <li>Error messages and logs never contain environment variable values or file contents. Interpolation of environment values is explicit and allow-listed.</li>
+            <li>Treat every <code>.dml</code> input as untrusted: bound sizes and depth, and reject path traversal when resolving files.</li>
+            <li>Keep <code>testdata/.env.example</code> to placeholders only. Do not commit <code>.DS_Store</code>.</li>
+            <li>Run <code>go vet</code> and <code>govulncheck ./...</code> before a release, and keep <code>go.sum</code> committed.</li>
+        </ul>
+
+        <h2 id="workflow">Workflow</h2>
+        <ul>
+            <li>Work for a minor version happens on a <code>release/x.y</code> branch, which is merged into <code>main</code> with a pull request.</li>
+            <li>DML releases are tagged <code>x.y.z</code>, for example <code>0.8.2</code>. dml-go releases are tagged <code>vX.Y.Z</code>, for example <code>v0.10.0</code>.</li>
+            <li>When dml-go moves to a new DML jar, update the pinned version and its SHA-256 in the same change.</li>
+        </ul>
+    </main>
+
+    <footer>
+        © 2025 Tree. All rights reserved.
+    </footer>
+</body>
+</html>

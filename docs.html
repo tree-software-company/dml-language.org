@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Documentation of DML 0.8.2: DML language and interpreter.">
+    <link rel="icon" href="img/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/logo.png">
+    <link rel="stylesheet" href="style/base.css">
+    <title>Documentation DML 0.8.2 | DML</title>
+</head>
+<body>
+    <nav>
+        <div><a class="nav-brand" href="index.html"><strong>DML</strong></a></div>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle menu">
+        <label for="nav-toggle" class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></label>
+        <div class="nav-menu">
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Resources</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    <li><a href="docs.html">Documentation</a></li>
+                    <li><a href="patch-notes.html">Patch Notes</a></li>
+                    <li><a href="style-guide.html">Style Guide</a></li>
+                    <li><a href="https://github.com/tree-software-company/DML/issues" target="_blank" rel="noopener noreferrer">Issues</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Community</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <h1>Documentation</h1>
+        <p class="doc-subtitle">DML — Descriptive Markup Language</p>
+
+        <div class="doc-switch">
+            <ul class="doc-tabs">
+                <li><a href="docs.html" aria-current="page">DML</a></li>
+                <li><a href="docs-go.html">dml-go</a></li>
+            </ul>
+            <div class="dropdown version-picker">
+                <button type="button" class="dropdown-toggle version-toggle" aria-haspopup="true">Version 0.8.2</button>
+                <ul class="dropdown-menu">
+                    <li><a href="docs.html" aria-current="page">0.8.2 (latest)</a></li>
+                    <li><a href="docs/dml/0.8.1.html">0.8.1</a></li>
+                    <li><a href="docs/dml/0.8.0.html">0.8.0</a></li>
+                    <li><a href="docs/dml/0.7.1.html">0.7.1</a></li>
+                    <li><a href="docs/dml/0.7.0.html">0.7.0</a></li>
+                    <li><a href="docs/dml/0.6.2.html">0.6.2</a></li>
+                    <li><a href="docs/dml/0.6.1.html">0.6.1</a></li>
+                    <li><a href="docs/dml/0.6.0.html">0.6.0</a></li>
+                    <li><a href="docs/dml/0.5.1.html">0.5.1</a></li>
+                    <li><a href="docs/dml/0.5.0.html">0.5.0</a></li>
+                    <li><a href="docs/dml/0.4.2.html">0.4.2</a></li>
+                    <li><a href="docs/dml/0.4.1.html">0.4.1</a></li>
+                    <li><a href="docs/dml/0.4.0.html">0.4.0</a></li>
+                    <li><a href="docs/dml/0.3.0.html">0.3.0</a></li>
+                    <li><a href="docs/dml/0.2.1.html">0.2.1</a></li>
+                    <li><a href="docs/dml/0.2.0.html">0.2.0</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <p>DML is a simple, JSON-like descriptive language that supports variables, arithmetic operations, nested structures, lists, and maps. It was created using Kotlin, ANTLR, and the Java Virtual Machine.</p>
+        <p>Think of it as a strongly-typed, comment-friendly version of JSON — built for configuration, definition, and readability.</p>
+        <hr />
+
+        <aside class="toc">
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#example-dml-code">Example DML Code</a></li>
+                <li><a href="#cli-commands">CLI Commands</a></li>
+                <li><a href="#development">Development</a></li>
+                <li><a href="#license">License</a></li>
+                <li><a href="#author">Author</a></li>
+            </ul>
+        </aside>
+
+        <h2 id="features">Features</h2>
+        <ul>
+        <li>Basic types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>list</code>, <code>map</code>, <code>url</code>, <code>file</code>, <code>char</code></li>
+        <li>Possibility to create class</li>
+        <li>Arithmetic operations (e.g. <code>number age = 20 + 5</code>)</li>
+        <li>Function: <code>now()</code> with possibility to add and subtraction dates <code>d</code> - day; <code>h</code> - hour;<code>m</code> - minutes (e.g. <code>date tomorrow = now(&quot;+1d&quot;);</code>)</li>
+        <li>Nested structures (e.g. <code>event.user.name</code>)</li>
+        <li>List &amp; Map literals</li>
+        <li>Type checking with error reporting</li>
+        <li>Simple CLI (<code>dml read file.dml</code>)</li>
+        <li>Written in Kotlin + ANTLR</li>
+        </ul>
+        <hr />
+        <h2 id="installation">Installation</h2>
+        <h3 id="option-1-install-via-homebrew-recommended">Option 1: Install via Homebrew (Recommended)</h3>
+        <blockquote>
+        <p>Coming soon: Homebrew Tap to install globally</p>
+        </blockquote>
+        <pre><code class="language-bash">brew tap tree-software-company/dml
+brew install dml
+</code></pre>
+        <p>Then you can use it globally like:</p>
+        <pre><code class="language-bash">dml -r dml test.dml
+</code></pre>
+        <blockquote>
+        <p>The Homebrew formula downloads the <code>.jar</code> from GitHub Releases, verifies its SHA-256 checksum and runs it with the Homebrew-managed <code>openjdk@17</code>.</p>
+        </blockquote>
+        <hr />
+        <h3 id="option-2-manual-installation-local-development">Option 2: Manual Installation (Local Development)</h3>
+        <h4 id="1-clone-the-repo-and-build-the-jar">1. Clone the repo and build the <code>.jar</code></h4>
+        <pre><code class="language-bash">git clone https://github.com/tree-software-company/dml.git
+cd dml
+gradle build
+</code></pre>
+        <p>After build, you'll find your CLI JAR at:</p>
+        <pre><code class="language-bash">build/libs/DML-all.jar
+</code></pre>
+        <h4 id="2-run-the-cli">2. Run the CLI</h4>
+        <pre><code class="language-bash">java -jar build/libs/DML-all.jar -r dml test.dml
+</code></pre>
+        <h4 id="3-optional-make-it-global">3. (Optional) Make it global</h4>
+        <p>Create a wrapper script:</p>
+        <pre><code class="language-bash">sudo nano /usr/local/bin/dml
+</code></pre>
+        <p>Paste:</p>
+        <pre><code class="language-bash">#!/bin/bash
+exec /path/to/jdk-17/bin/java -jar /path/to/DML-all.jar &quot;$@&quot;
+</code></pre>
+        <p>Then make it executable:</p>
+        <pre><code class="language-bash">chmod +x /usr/local/bin/dml
+</code></pre>
+        <p>Now you can run:</p>
+        <pre><code class="language-bash">dml read file.dml
+</code></pre>
+        <h4 id="4-verify-a-downloaded-jar">4. Verify a downloaded <code>.jar</code></h4>
+        <p>A <code>.jar</code> downloaded from GitHub Releases runs with the full permissions of your user. Compare its checksum with the <code>sha256</code> pinned in the <a href="https://github.com/tree-software-company/homebrew-dml/blob/main/dml.rb" target="_blank" rel="noopener noreferrer">Homebrew formula</a> before running it:</p>
+        <pre><code class="language-bash">shasum -a 256 DML-all.jar
+</code></pre>
+        <p>Do not run a <code>.jar</code> whose checksum differs.</p>
+        <h2 id="example-dml-code">Example DML Code</h2>
+        <pre><code class="language-bash">string title = &quot;Hello&quot;;
+number age = 30 + 2;
+boolean isActive = true;
+
+list numbers = [1, 2, 3, 4];
+map user = { &quot;name&quot;: &quot;Szymon&quot;, &quot;email&quot;: &quot;example@example.com&quot; };
+
+string message = &quot;Welcome, &quot; + user.name;
+</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-bash">Variables: {
+  title=Hello,
+  age=32,
+  isActive=true,
+  numbers=[1, 2, 3, 4],
+  user={name=Szymon, email=example@example.com},
+  message=Welcome, Szymon
+}
+</code></pre>
+        <h2 id="cli-commands">CLI Commands</h2>
+        <table>
+        <thead>
+        <tr>
+        <th>Command</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>dml -r dml FILE</code></td>
+        <td>Executes and interprets a .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -r json FILE</code></td>
+        <td>Convert .json file for .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -r yaml FILE</code></td>
+        <td>Convert .yaml file for .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -r xml FILE</code></td>
+        <td>Convert .xml file for .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -r plist FILE</code></td>
+        <td>Convert .plist file for .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -r properties FILE</code></td>
+        <td>Convert .properties file for .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -w json FILE</code></td>
+        <td>Convert .dml file for .json file</td>
+        </tr>
+        <tr>
+        <td><code>dml -w yaml FILE</code></td>
+        <td>Convert .dml file for .yaml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -w xml FILE</code></td>
+        <td>Convert .dml file for .xml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -w properties FILE</code></td>
+        <td>Convert .dml file for .properties file</td>
+        </tr>
+        <tr>
+        <td><code>dml -w plist FILE</code></td>
+        <td>Convert .dml file for .plist file</td>
+        </tr>
+        <tr>
+        <td><code>dml -l FILE</code></td>
+        <td>Check if .dml file will validate</td>
+        </tr>
+        <tr>
+        <td><code>dml -f FILE</code></td>
+        <td>Make .dml code more beauty</td>
+        </tr>
+        <tr>
+        <td><code>dml -e 'EXTENSION' FILE</code></td>
+        <td>Create code from terminal</td>
+        </tr>
+        <tr>
+        <td><code>dml -n FILE</code></td>
+        <td>Create a new DML file with a template</td>
+        </tr>
+        <tr>
+        <td><code>dml -h</code> or <code>dml --help</code></td>
+        <td>Shows help menu</td>
+        </tr>
+        <tr>
+        <td><code>dml -v</code> or <code>dml --version</code></td>
+        <td>Shows lang version</td>
+        </tr>
+        <tr>
+        <td><code>dml -u</code> or <code>dml --update</code></td>
+        <td>Update DML via Homebrew</td>
+        </tr>
+        </tbody>
+        </table>
+        <hr />
+        <h2 id="development">Development</h2>
+        <p>This project uses:</p>
+        <ul>
+        <li>Kotlin 1.9</li>
+        <li>Java 17</li>
+        <li>ANTLR 4.13</li>
+        <li>Gradle + Shadow plugin</li>
+        </ul>
+        <hr />
+        <h2 id="license">License</h2>
+        <p>This project is licensed under the <a href="https://github.com/tree-software-company/DML/blob/0.8.2/LICENSE" target="_blank" rel="noopener noreferrer">Apache 2.0 License</a>.</p>
+        <hr />
+        <h2 id="author">Author</h2>
+        <p>Developed by <a href="https://github.com/tree-software-company" target="_blank" rel="noopener noreferrer">Tree</a></p>
+    </main>
+
+    <footer>
+        © 2025 Tree. All rights reserved.
+    </footer>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Documentation of dml-go 0.5.0: Go library and command line tool.">
+    <link rel="icon" href="../../img/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="../../img/logo.png">
+    <link rel="stylesheet" href="../../style/base.css">
+    <title>Documentation dml-go 0.5.0 | DML</title>
+</head>
+<body>
+    <nav>
+        <div><a class="nav-brand" href="../../index.html"><strong>DML</strong></a></div>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle menu">
+        <label for="nav-toggle" class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></label>
+        <div class="nav-menu">
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Resources</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    <li><a href="../../docs.html">Documentation</a></li>
+                    <li><a href="../../patch-notes.html">Patch Notes</a></li>
+                    <li><a href="../../style-guide.html">Style Guide</a></li>
+                    <li><a href="https://github.com/tree-software-company/DML/issues" target="_blank" rel="noopener noreferrer">Issues</a></li>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-haspopup="true">Community</button>
+                <ul class="dropdown-menu">
+                    <li><a href="https://github.com/tree-software-company/DML/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussions</a></li>
+                    <li><a href="../../blog.html">Blog</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        <h1>Documentation</h1>
+        <p class="doc-subtitle">DML-Go — Lightweight DML Parser and Config Loader for Go</p>
+
+        <div class="doc-switch">
+            <ul class="doc-tabs">
+                <li><a href="../../docs.html">DML</a></li>
+                <li><a href="../../docs-go.html" aria-current="page">dml-go</a></li>
+            </ul>
+            <div class="dropdown version-picker">
+                <button type="button" class="dropdown-toggle version-toggle" aria-haspopup="true">Version 0.5.0</button>
+                <ul class="dropdown-menu">
+                    <li><a href="../../docs-go.html">0.10.0 (latest)</a></li>
+                    <li><a href="0.9.2.html">0.9.2</a></li>
+                    <li><a href="0.8.0.html">0.8.0</a></li>
+                    <li><a href="0.7.1.html">0.7.1</a></li>
+                    <li><a href="0.7.0.html">0.7.0</a></li>
+                    <li><a href="0.6.1.html">0.6.1</a></li>
+                    <li><a href="0.6.0.html">0.6.0</a></li>
+                    <li><a href="0.5.0.html" aria-current="page">0.5.0</a></li>
+                    <li><a href="0.4.0.html">0.4.0</a></li>
+                    <li><a href="0.3.0.html">0.3.0</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <aside class="doc-notice">
+            <p>You are reading the documentation of dml-go 0.5.0. The latest version is <a href="../../docs-go.html">0.10.0</a>.</p>
+        </aside>
+        <p><strong>DML-Go</strong> is a lightweight and fast Go library that allows you to load, parse, validate, and cache <code>.dml</code> (Descriptive Markup Language) configuration files easily.</p>
+        <p>It supports:</p>
+        <ul>
+        <li>Nested structures (<code>server.port</code>)</li>
+        <li>Typed access with simple API (<code>GetString</code>, <code>GetNumber</code>, <code>GetBool</code>, <code>GetList</code>, <code>GetMap</code>)</li>
+        <li>Validation of required keys and types</li>
+        <li>In-memory caching for faster reads</li>
+        <li>Manual reload and clear cache functionality</li>
+        <li>Full nested key support (e.g., <code>server.port</code>)</li>
+        </ul>
+        <p>Built for configuration-driven applications and servers.</p>
+        <hr />
+
+        <aside class="toc">
+            <ul>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#api-overview">API Overview</a></li>
+                <li><a href="#example-dml-features-supported">Example DML Features Supported</a></li>
+                <li><a href="#license">License</a></li>
+                <li><a href="#author">Author</a></li>
+                <li><a href="#contributions">Contributions</a></li>
+            </ul>
+        </aside>
+
+        <h2 id="installation">Installation</h2>
+        <p>Clone the repository:</p>
+        <pre><code class="language-bash">git clone https://github.com/tree-software-company/dml-go.git
+cd dml-go
+</code></pre>
+        <p>Or copy the <code>dml/</code> folder into your Go project.</p>
+        <hr />
+        <h2 id="quick-start">Quick Start</h2>
+        <h3 id="1-example-configdml">1. Example <code>config.dml</code></h3>
+        <pre><code class="language-dml">map server = {
+  &quot;port&quot;: 8080,
+  &quot;timeout&quot;: 15
+};
+
+map database = {
+  &quot;host&quot;: &quot;localhost&quot;,
+  &quot;port&quot;: 5432
+};
+</code></pre>
+        <p>Save as <code>testdata/config.dml</code>.</p>
+        <hr />
+        <h3 id="2-basic-usage">2. Basic usage</h3>
+        <pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+    &quot;time&quot;
+
+    &quot;github.com/tree-software-company/dml-go/dml&quot;
+)
+
+func main() {
+    cfg, err := dml.NewConfig(&quot;testdata/config.dml&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    serverMap := cfg.GetMap(&quot;server&quot;)
+    port := int(serverMap[&quot;port&quot;].(float64))
+    timeout := int(serverMap[&quot;timeout&quot;].(float64))
+
+    fmt.Printf(&quot;🚀 Starting server on port %d
+&quot;, port)
+    fmt.Printf(&quot;⏳ Timeout: %ds
+&quot;, timeout)
+
+    server := &amp;http.Server{
+        Addr:         fmt.Sprintf(&quot;:%d&quot;, port),
+        ReadTimeout:  time.Duration(timeout) * time.Second,
+        WriteTimeout: time.Duration(timeout) * time.Second,
+    }
+
+    http.HandleFunc(&quot;/api/hello&quot;, func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, &quot;👋 Hello from DML-configured server!&quot;)
+    })
+
+    if err := server.ListenAndServe(); err != nil {
+        log.Fatal(err)
+    }
+}
+</code></pre>
+        <p>Then open:<br />
+        <code>http://localhost:8080/api/hello</code></p>
+        <p>✅ You will see: <code>&quot;👋 Hello from DML-configured server!&quot;</code></p>
+        <hr />
+        <h2 id="api-overview">API Overview</h2>
+        <h3 id="core-functions">Core functions</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Function</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>Load(file string)</code></td>
+        <td>Loads and parses a <code>.dml</code> file into a raw <code>map[string]interface{}</code></td>
+        </tr>
+        <tr>
+        <td><code>NewConfig(file string)</code></td>
+        <td>Loads and parses a <code>.dml</code> file into a <code>Config</code> structure</td>
+        </tr>
+        <tr>
+        <td><code>Cache(file string)</code></td>
+        <td>Loads and caches parsed data in memory</td>
+        </tr>
+        <tr>
+        <td><code>Reload(file string)</code></td>
+        <td>Forces re-parsing and updates the cache for a file</td>
+        </tr>
+        <tr>
+        <td><code>ClearCache()</code></td>
+        <td>Clears all cached parsed files from memory</td>
+        </tr>
+        <tr>
+        <td><code>Watch(file)</code></td>
+        <td>Live reload of dml file</td>
+        </tr>
+        <tr>
+        <td><code>SetDefaultsToFile(file, variables)</code></td>
+        <td>Change variables from files to go</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="config-methods"><code>Config</code> methods</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Method</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>GetString(key string)</code></td>
+        <td>Returns a string value (supports nested keys like <code>server.name</code>)</td>
+        </tr>
+        <tr>
+        <td><code>GetNumber(key string)</code></td>
+        <td>Returns a float64 number value</td>
+        </tr>
+        <tr>
+        <td><code>GetBool(key string)</code></td>
+        <td>Returns a boolean value</td>
+        </tr>
+        <tr>
+        <td><code>GetList(key string)</code></td>
+        <td>Returns a list or an empty list</td>
+        </tr>
+        <tr>
+        <td><code>GetMap(key string)</code></td>
+        <td>Returns a map or an empty map</td>
+        </tr>
+        <tr>
+        <td><code>MustString(key string)</code></td>
+        <td>Returns a string value or panics if missing</td>
+        </tr>
+        <tr>
+        <td><code>Has(key string)</code></td>
+        <td>Checks if a key exists</td>
+        </tr>
+        <tr>
+        <td><code>Keys()</code></td>
+        <td>Returns a sorted list of top-level keys</td>
+        </tr>
+        <tr>
+        <td><code>Dump()</code></td>
+        <td>Dumps the entire parsed data as formatted JSON</td>
+        </tr>
+        <tr>
+        <td><code>ValidateRequired(keys...)</code></td>
+        <td>Validates that specific keys exist</td>
+        </tr>
+        <tr>
+        <td><code>ValidateRequiredTyped(rules map[string]string)</code></td>
+        <td>Validates that keys exist and match expected types</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="debug-methods"><code>Debug</code> methods</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Method</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>MissedKeys()</code></td>
+        <td>Schow which variables wasn't declarates in dml config</td>
+        </tr>
+        <tr>
+        <td><code>MissedTypedKeys()</code></td>
+        <td>Schow which types wasn't declarates in dml config</td>
+        </tr>
+        <tr>
+        <td><code>ValidateState()</code></td>
+        <td>Schow which types and variables wasn't declarates in dml config</td>
+        </tr>
+        </tbody>
+        </table>
+        <h3 id="internal-helpers">Internal helpers</h3>
+        <table>
+        <thead>
+        <tr>
+        <th>Helper</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td><code>resolveNestedKey(key)</code></td>
+        <td>Allows reading deeply nested values using dot notation like <code>server.port</code></td>
+        </tr>
+        </tbody>
+        </table>
+        <hr />
+        <h2 id="example-dml-features-supported">Example DML Features Supported</h2>
+        <pre><code class="language-dml">string title = &quot;Hello World&quot;;
+number age = 25 + 5;
+boolean isActive = true;
+
+list hobbies = [&quot;coding&quot;, &quot;gaming&quot;, &quot;reading&quot;];
+map user = { &quot;name&quot;: &quot;Szymon&quot;, &quot;email&quot;: &quot;example@example.com&quot; };
+
+string welcome = &quot;Welcome, &quot; + user.name;
+</code></pre>
+        <ul>
+        <li>Comments are supported</li>
+        <li>Arithmetic operations (<code>+</code>, <code>-</code>, etc.)</li>
+        <li>Nested maps and lists</li>
+        <li>String concatenations</li>
+        </ul>
+        <hr />
+        <h2 id="license">License</h2>
+        <p>This project is licensed under the <a href="https://github.com/tree-software-company/dml-go/blob/0.5.0/LICENSE" target="_blank" rel="noopener noreferrer">Apache 2.0 License</a>.</p>
+        <hr />
+        <h2 id="author">Author</h2>
+        <p>Developed by <a href="https://github.com/tree-software-company" target="_blank" rel="noopener noreferrer">Tree Software Company</a> ✨</p>
+        <hr />
+        <h2 id="contributions">Contributions</h2>
+        <p>Feel free to open issues, create pull requests, or suggest features! 🚀
+        Let's make DML integration in Go even better together!</p>
+    </main>
+
+    <footer>
+        © 2025 Tree. All rights reserved.
+    </footer>
+</body>
+</html>
