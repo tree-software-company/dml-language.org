@@ -50,6 +50,16 @@
         <p>The language, the interpreter and the <code>dml</code> command line tool.</p>
 
         <article class="release">
+            <h3>0.9.0</h3>
+            <time datetime="2026-11-07">November 7, 2026</time>
+            <ul>
+                <li>DML programs can read data from configuration files: <code>loadEnv(".env")</code> loads a <code>.env</code> file from the project directory, and <code>env("KEY")</code> or <code>env("KEY", "default")</code> reads its values. Environment variables of the process are not exposed to DML programs.</li>
+                <li>DML files can keep development and production values side by side in top-level <code>mode dev { ... }</code> and <code>mode prod { ... }</code> blocks. The mode is selected with <code>--mode NAME</code> (or <code>-m NAME</code>) when running a file, and without the flag every <code>mode</code> block is skipped. <code>mode</code> is now a reserved word and can no longer be used as a variable, class or instance name.</li>
+                <li>Contributor instructions now require updating the documentation and the patch notes with every user-visible change.</li>
+            </ul>
+        </article>
+
+        <article class="release">
             <h3>0.8.2</h3>
             <time datetime="2026-10-24">October 24, 2026</time>
             <ul>

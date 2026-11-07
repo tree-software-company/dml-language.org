@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Documentation of DML 0.8.2: DML language and interpreter.">
+    <meta name="description" content="Documentation of DML 0.9.0: DML language and interpreter.">
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="apple-touch-icon" href="img/logo.png">
     <link rel="stylesheet" href="style/base.css">
-    <title>Documentation DML 0.8.2 | DML</title>
+    <title>Documentation DML 0.9.0 | DML</title>
 </head>
 <body>
     <nav>
@@ -45,9 +45,10 @@
                 <li><a href="docs-go.html">dml-go</a></li>
             </ul>
             <div class="dropdown version-picker">
-                <button type="button" class="dropdown-toggle version-toggle" aria-haspopup="true">Version 0.8.2</button>
+                <button type="button" class="dropdown-toggle version-toggle" aria-haspopup="true">Version 0.9.0</button>
                 <ul class="dropdown-menu">
-                    <li><a href="docs.html" aria-current="page">0.8.2 (latest)</a></li>
+                    <li><a href="docs.html" aria-current="page">0.9.0 (latest)</a></li>
+                    <li><a href="docs/dml/0.8.2.html">0.8.2</a></li>
                     <li><a href="docs/dml/0.8.1.html">0.8.1</a></li>
                     <li><a href="docs/dml/0.8.0.html">0.8.0</a></li>
                     <li><a href="docs/dml/0.7.1.html">0.7.1</a></li>
@@ -76,6 +77,8 @@
                 <li><a href="#features">Features</a></li>
                 <li><a href="#installation">Installation</a></li>
                 <li><a href="#example-dml-code">Example DML Code</a></li>
+                <li><a href="#configuration-files-env">Configuration Files (.env)</a></li>
+                <li><a href="#modes-dev-prod">Modes (dev / prod)</a></li>
                 <li><a href="#cli-commands">CLI Commands</a></li>
                 <li><a href="#development">Development</a></li>
                 <li><a href="#license">License</a></li>
@@ -89,6 +92,8 @@
         <li>Possibility to create class</li>
         <li>Arithmetic operations (e.g. <code>number age = 20 + 5</code>)</li>
         <li>Function: <code>now()</code> with possibility to add and subtraction dates <code>d</code> - day; <code>h</code> - hour;<code>m</code> - minutes (e.g. <code>date tomorrow = now(&quot;+1d&quot;);</code>)</li>
+        <li>Configuration files: <code>loadEnv(&quot;.env&quot;)</code> and <code>env(&quot;KEY&quot;)</code> read values from a <code>.env</code> file</li>
+        <li>Environments: <code>mode dev { ... }</code> and <code>mode prod { ... }</code> blocks selected with <code>--mode</code></li>
         <li>Nested structures (e.g. <code>event.user.name</code>)</li>
         <li>List &amp; Map literals</li>
         <li>Type checking with error reporting</li>
@@ -162,6 +167,59 @@ string message = &quot;Welcome, &quot; + user.name;
   message=Welcome, Szymon
 }
 </code></pre>
+        <h2 id="configuration-files-env">Configuration Files (.env)</h2>
+        <p>A DML program can read values from a <code>.env</code> file that lies in the project directory (the directory of the executed <code>.dml</code> file or below it).</p>
+        <p><code>.env</code>:</p>
+        <pre><code class="language-bash">DB_HOST=localhost
+export DB_PORT=&quot;5432&quot;
+API_KEY=top-secret # inline comment
+</code></pre>
+        <p><code>app.dml</code>:</p>
+        <pre><code class="language-bash">loadEnv(&quot;.env&quot;);
+
+string host = env(&quot;DB_HOST&quot;);
+string port = env(&quot;DB_PORT&quot;, &quot;1111&quot;);
+string region = env(&quot;REGION&quot;, &quot;eu-west-1&quot;);
+private string apiKey = env(&quot;API_KEY&quot;);
+</code></pre>
+        <ul>
+        <li><code>loadEnv(path)</code> loads a <code>.env</code> file. Calling it again merges the files, later keys win. The path is relative to the file that calls it and must stay inside the project directory; traversal, absolute paths and symlinks leading outside are rejected.</li>
+        <li><code>env(&quot;KEY&quot;)</code> returns the value as a <code>string</code> and fails with an error naming the key when it is not defined.</li>
+        <li><code>env(&quot;KEY&quot;, default)</code> returns <code>default</code> when the key is not defined; the default can be of any type.</li>
+        <li>Supported syntax: <code>KEY=value</code>, optional <code>export</code> prefix, <code>&quot;double quoted&quot;</code> values with <code>\n</code>, <code>\t</code>, <code>\&quot;</code> and <code>\\</code> escapes, <code>'single quoted'</code> literal values, <code>#</code> comments on their own line or after a space. Variables such as <code>${HOME}</code> are not expanded.</li>
+        <li>Only values loaded with <code>loadEnv</code> are visible. Environment variables of the process are not exposed to DML programs.</li>
+        <li>Limits: the file may not exceed 10 MiB, 1000 keys and 10000 characters per value. Error messages name the key or line, never the value.</li>
+        <li>Values are always strings, so <code>number port = env(&quot;PORT&quot;)</code> is a type error. The CLI prints every variable that is not <code>private</code>; declare secrets as <code>private</code>.</li>
+        <li><code>loadEnv</code> works only when running a file (<code>dml -r dml file.dml</code>), not for inline code.</li>
+        </ul>
+        <h2 id="modes-dev-prod">Modes (dev / prod)</h2>
+        <p>A DML file can keep the values of several environments side by side in <code>mode</code> blocks. Only the block of the selected mode is executed.</p>
+        <p><code>app.dml</code>:</p>
+        <pre><code class="language-bash">string app = &quot;tree&quot;;
+
+mode dev {
+    string db = &quot;localhost&quot;;
+}
+
+mode prod {
+    string db = &quot;prod.db.server&quot;;
+}
+</code></pre>
+        <pre><code class="language-bash">dml -r dml app.dml --mode prod
+</code></pre>
+        <p>Output:</p>
+        <pre><code class="language-bash">app = tree
+db = prod.db.server
+</code></pre>
+        <ul>
+        <li><code>mode NAME { ... }</code> is allowed only at the top level of a file. It cannot be nested and cannot be placed inside a function. <code>NAME</code> is any identifier (<code>dev</code>, <code>prod</code>, <code>staging</code>...).</li>
+        <li>The mode is selected with <code>--mode NAME</code>, <code>--mode=NAME</code> or <code>-m NAME</code>, anywhere on the command line. The flag can be given only once, and the name may contain only letters, digits and underscores (up to 64 characters).</li>
+        <li>Without the flag every <code>mode</code> block is skipped, so a production block never runs by accident. Blocks of other modes are not executed at all: their <code>loadEnv</code>, <code>import</code>, <code>print</code> and <code>assert</code> statements do nothing.</li>
+        <li>The statements of the selected block run in place, in the global scope, so the order in the file decides which declaration wins. A block can use <code>private</code>, declare functions and call <code>loadEnv</code>; the sandbox rules of <code>import</code> and <code>loadEnv</code> apply to it unchanged.</li>
+        <li>Imported files can contain <code>mode</code> blocks too; they follow the mode selected for the main file.</li>
+        <li><code>mode</code> is a reserved word, so it can no longer be used as a variable, class or instance name.</li>
+        <li>The flag works with <code>dml -r dml FILE</code> and <code>dml -w FORMAT FILE</code>. Conversions from other formats (<code>-r json</code>, <code>-r yaml</code>, <code>-r xml</code>, <code>-r plist</code>) reject it. Inline code does not take part in modes.</li>
+        </ul>
         <h2 id="cli-commands">CLI Commands</h2>
         <table>
         <thead>
@@ -174,6 +232,10 @@ string message = &quot;Welcome, &quot; + user.name;
         <tr>
         <td><code>dml -r dml FILE</code></td>
         <td>Executes and interprets a .dml file</td>
+        </tr>
+        <tr>
+        <td><code>dml -r dml FILE --mode NAME</code></td>
+        <td>Executes a .dml file with the <code>mode NAME</code> blocks (<code>-m NAME</code>)</td>
         </tr>
         <tr>
         <td><code>dml -r json FILE</code></td>
@@ -256,7 +318,7 @@ string message = &quot;Welcome, &quot; + user.name;
         </ul>
         <hr />
         <h2 id="license">License</h2>
-        <p>This project is licensed under the <a href="https://github.com/tree-software-company/DML/blob/0.8.2/LICENSE" target="_blank" rel="noopener noreferrer">Apache 2.0 License</a>.</p>
+        <p>This project is licensed under the <a href="https://github.com/tree-software-company/DML/blob/0.9.0/LICENSE" target="_blank" rel="noopener noreferrer">Apache 2.0 License</a>.</p>
         <hr />
         <h2 id="author">Author</h2>
         <p>Developed by <a href="https://github.com/tree-software-company" target="_blank" rel="noopener noreferrer">Tree</a></p>
